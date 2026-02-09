@@ -1,6 +1,6 @@
-# claude-deck: Claude Code Desktop Companion
+# nexus: AI Agent Desktop Companion
 
-Codex Mac アプリのようにプロジェクトを俯瞰・管理できる Claude Code 向けデスクトップアプリ。
+Codex Mac アプリのようにプロジェクトを俯瞰・管理できる AI CLI エージェント向けデスクトップアプリ。
 
 ## 背景・動機
 
