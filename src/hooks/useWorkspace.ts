@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { toast } from "sonner";
 import { useTerminalStore } from "@/stores/terminalStore";
 import { useWorkspaceStore, settingsStore } from "@/stores/workspaceStore";
 
@@ -51,6 +52,7 @@ export function useWorkspace() {
         }
       } catch (e) {
         console.error("Failed to restore workspace:", e);
+        toast.error("ワークスペースの復元に失敗しました");
       } finally {
         if (!aborted.current) {
           setIsRestoring(false);

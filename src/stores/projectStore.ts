@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { invoke } from "@tauri-apps/api/core";
+import { toast } from "sonner";
 import type { ProjectInfo, SessionInfo } from "@/types/project";
 
 interface ProjectState {
@@ -52,6 +53,7 @@ export const useProjectStore = create<ProjectState>()((set, get) => ({
       }));
     } catch (e) {
       console.error("Failed to fetch sessions:", e);
+      toast.error("セッション一覧の取得に失敗しました");
     }
   },
 

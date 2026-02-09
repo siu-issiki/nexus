@@ -51,6 +51,7 @@ export const useTerminalStore = create<TerminalState>()((set, get) => ({
       }));
     } catch (e) {
       console.error("Failed to spawn PTY:", e);
+      toast.error("ターミナルの起動に失敗しました");
     }
   },
 
@@ -76,6 +77,7 @@ export const useTerminalStore = create<TerminalState>()((set, get) => ({
       }));
     } catch (e) {
       console.error("Failed to spawn PTY:", e);
+      toast.error("ターミナルの起動に失敗しました");
     }
   },
 
