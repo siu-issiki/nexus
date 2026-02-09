@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { invoke } from "@tauri-apps/api/core";
-import type { TerminalTab } from "@/types/terminal";
+import { toast } from "sonner";
+import type { TerminalTab, PersistedTab } from "@/types/terminal";
 
 interface TerminalState {
   tabs: TerminalTab[];
@@ -13,6 +14,7 @@ interface TerminalState {
     title: string
   ) => Promise<void>;
   openNewSession: (cwd: string, title?: string) => Promise<void>;
+  restoreTab: (persisted: PersistedTab) => Promise<void>;
   closeTab: (id: string) => Promise<void>;
   setActiveTab: (id: string) => void;
 }
@@ -36,7 +38,13 @@ export const useTerminalStore = create<TerminalState>()((set, get) => ({
         cols: 80,
         rows: 24,
       });
-      const tab: TerminalTab = { id: ptyId, projectId, sessionId, title };
+      const tab: TerminalTab = {
+        id: ptyId,
+        projectId,
+        sessionId,
+        title,
+        cwd: cwd ?? null,
+      };
       set((state) => ({
         tabs: [...state.tabs, tab],
         activeTabId: ptyId,
@@ -60,6 +68,7 @@ export const useTerminalStore = create<TerminalState>()((set, get) => ({
         projectId: null,
         sessionId: null,
         title: label,
+        cwd,
       };
       set((state) => ({
         tabs: [...state.tabs, tab],
@@ -67,6 +76,38 @@ export const useTerminalStore = create<TerminalState>()((set, get) => ({
       }));
     } catch (e) {
       console.error("Failed to spawn PTY:", e);
+    }
+  },
+
+  restoreTab: async (persisted) => {
+    const { tabs } = get();
+    if (
+      persisted.sessionId &&
+      tabs.some((t) => t.sessionId === persisted.sessionId)
+    ) {
+      return;
+    }
+
+    try {
+      const ptyId = await invoke<string>("spawn_pty", {
+        cwd: persisted.cwd,
+        sessionId: persisted.sessionId,
+        cols: 80,
+        rows: 24,
+      });
+      const tab: TerminalTab = {
+        id: ptyId,
+        projectId: persisted.projectId,
+        sessionId: persisted.sessionId,
+        title: persisted.title,
+        cwd: persisted.cwd,
+      };
+      set((state) => ({
+        tabs: [...state.tabs, tab],
+      }));
+    } catch (e) {
+      console.error("Failed to restore tab:", e);
+      toast.error("タブの復元に失敗しました");
     }
   },
 
@@ -89,4 +130,5 @@ export const useTerminalStore = create<TerminalState>()((set, get) => ({
   setActiveTab: (id) => {
     set({ activeTabId: id });
   },
+
 }));
