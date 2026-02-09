@@ -2,6 +2,7 @@ import { Search } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { ProjectList } from "./ProjectList";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { useProjectStore } from "@/stores/projectStore";
 
 interface SidebarProps {
@@ -18,6 +19,9 @@ export function Sidebar({ width }: SidebarProps) {
     >
       <div className="flex h-12 items-center border-b border-border px-4">
         <h1 className="text-sm font-semibold">nexus</h1>
+        <span className="ml-auto">
+          <ThemeToggle />
+        </span>
       </div>
 
       <div className="border-b border-border px-3 py-2">
