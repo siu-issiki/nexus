@@ -1,5 +1,6 @@
 import { MessageSquare } from "lucide-react";
 import { useProjectStore } from "@/stores/projectStore";
+import { useTerminalStore } from "@/stores/terminalStore";
 import { cn } from "@/lib/utils";
 import type { SessionInfo } from "@/types/project";
 
@@ -24,12 +25,23 @@ function formatRelativeTime(unixMs: number | null): string {
 
 export function SessionItem({ session }: SessionItemProps) {
   const { selectedSessionId, selectSession } = useProjectStore();
+  const openSession = useTerminalStore((s) => s.openSession);
   const isSelected = selectedSessionId === session.id;
   const preview = session.firstMessage || "No message";
 
+  const handleClick = () => {
+    selectSession(session.projectId, session.id);
+    openSession(
+      session.projectId,
+      session.id,
+      session.cwd ?? undefined,
+      session.firstMessage ?? "New session"
+    );
+  };
+
   return (
     <button
-      onClick={() => selectSession(session.projectId, session.id)}
+      onClick={handleClick}
       className={cn(
         "flex w-full flex-col gap-0.5 px-3 py-1.5 text-left",
         "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
