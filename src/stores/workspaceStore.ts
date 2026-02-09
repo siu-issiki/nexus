@@ -11,8 +11,8 @@ interface WorkspaceState {
   isRestoring: boolean;
 
   setSidebarWidth: (width: number) => void;
-  saveSidebarWidth: () => void;
-  saveTabs: (tabs: PersistedTab[], activeTabIndex: number) => void;
+  saveSidebarWidth: () => Promise<void>;
+  saveTabs: (tabs: PersistedTab[], activeTabIndex: number) => Promise<void>;
   loadWorkspace: () => Promise<PersistedWorkspace>;
   setIsRestoring: (value: boolean) => void;
 }
@@ -25,14 +25,14 @@ export const useWorkspaceStore = create<WorkspaceState>()((set, get) => ({
     set({ sidebarWidth: width });
   },
 
-  saveSidebarWidth: () => {
-    store.set("sidebarWidth", get().sidebarWidth);
+  saveSidebarWidth: async () => {
+    await store.set("sidebarWidth", get().sidebarWidth);
   },
 
-  saveTabs: (tabs, activeTabIndex) => {
+  saveTabs: async (tabs, activeTabIndex) => {
     if (get().isRestoring) return;
-    store.set("tabs", tabs);
-    store.set("activeTabIndex", activeTabIndex);
+    await store.set("tabs", tabs);
+    await store.set("activeTabIndex", activeTabIndex);
   },
 
   loadWorkspace: async () => {
